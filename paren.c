@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 char **string;
+char **copystring;
 char *temp=NULL;
 char* generate_parantheses1(int n)
 {
@@ -71,14 +72,13 @@ int check_pattern(char *str,int n)
 		if (str[i]=='(') lcount++;
 		if (str[i]==')') rcount++;
 	}
-	printf("\n");
 	if ((lcount == rcount) && lcount==n) return 1;
 	return 0;
 }
 
 int main(int argc, char **argv)
 {
-	int n,i=0,len=0,j=0,len1=0,len2=0;
+	int n,i=0,len=0,j=0,len1=0,len2=0,found=0;
 	int count=0;
 	printf("\nEnter value for n:");
 	scanf("%d",&n);
@@ -98,12 +98,58 @@ int main(int argc, char **argv)
 		string[count]=(generate_parantheses3(i));
 		count++;
 	}
-	printf("\n");
 	for (i=0;i<3*n;i++)
 	{
 		if (check_pattern(string[i],n)==1)
 		{
 			printf("\nValid pattern: %s",string[i]);
 		}
+	}
+	/* assume same stack size as string */
+	copystring=(char **)malloc((sizeof(char*)*3*n)+1);
+	for (i=0;i<3*n;i++)
+	{
+		copystring[i]=(char *)malloc((sizeof(char)*strlen(string[i]))+1);
+		strcpy(copystring[i],"");
+	}
+	for (i=0;i<3*n;i++)
+	{
+		for (j=0;j<3*n;j++)
+		{
+			if (strcmp(string[i],copystring[j])!=0 && strcmp(copystring[j],"")==0)
+			{
+				strcpy(copystring[j],string[i]);
+				break;
+			}
+			else
+			{
+				if (strcmp(string[i],copystring[j])==0) break;
+				else
+					continue;
+			}
+		}
+	}
+	/*
+	for (i=0;i<3*n;i++)
+	{
+		printf("\nCopyString[%d]=%s,String[%d]=%s",i,copystring[i],i,string[i]);
+	}
+	printf("\n");
+	*/
+
+	for (i=0;i<3*n;i++)
+	{
+		for (j=3*n-1;j>=0;j--)
+		{
+			len1=strlen(copystring[i]);
+			len2=strlen(copystring[j]);
+			len=len1+len2;
+			if (len == 2*n)
+			{
+				printf("\nValid Pattern: %s%s",copystring[i],copystring[j]);
+				continue;
+			}
+		}
+		printf("\n");
 	}
 }
