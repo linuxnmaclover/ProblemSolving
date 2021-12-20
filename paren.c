@@ -79,10 +79,12 @@ int check_pattern(char *str,int n)
 int main(int argc, char **argv)
 {
 	int n,i=0,len=0,j=0,len1=0,len2=0,found=0;
+	FILE *fp=NULL;
 	int count=0;
 	printf("\nEnter value for n:");
 	scanf("%d",&n);
 	string=(char **)malloc((sizeof(char*)*3*n)+1);
+	fp=fopen("output.txt","w");
 	for (i=n;i>0;i--)
 	{
 		string[count]=(generate_parantheses1(i));
@@ -103,6 +105,15 @@ int main(int argc, char **argv)
 		if (check_pattern(string[i],n)==1)
 		{
 			printf("\nValid pattern: %s",string[i]);
+			fwrite(string[i],strlen(string[i]),sizeof(char),fp);
+			fwrite("\n",1,sizeof(char),fp);
+		}
+		if (check_pattern(string[i],n-2)==1)
+		{
+			printf("\nValid pattern: ()%s()",string[i]);
+			fwrite("()",2,sizeof(char),fp);
+			fwrite(string[i],strlen(string[i]),sizeof(char),fp);
+			fwrite("()\n",3,sizeof(char),fp);
 		}
 	}
 	/* assume same stack size as string */
@@ -129,14 +140,9 @@ int main(int argc, char **argv)
 			}
 		}
 	}
-	/*
-	for (i=0;i<3*n;i++)
-	{
-		printf("\nCopyString[%d]=%s,String[%d]=%s",i,copystring[i],i,string[i]);
-	}
-	printf("\n");
-	*/
 
+	for (i=0;i<3*n;i++)
+		printf("\ncopystring[%d]=%s",i,copystring[i]);
 	for (i=0;i<3*n;i++)
 	{
 		for (j=3*n-1;j>=0;j--)
@@ -147,9 +153,13 @@ int main(int argc, char **argv)
 			if (len == 2*n)
 			{
 				printf("\nValid Pattern: %s%s",copystring[i],copystring[j]);
+				fwrite(copystring[i],strlen(copystring[i]),sizeof(char),fp);
+				fwrite(copystring[j],strlen(copystring[j]),sizeof(char),fp);
+				fwrite("\n",1,sizeof(char),fp);
 				continue;
 			}
 		}
 		printf("\n");
 	}
+	fclose(fp);
 }
